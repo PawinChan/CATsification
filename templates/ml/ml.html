@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block head %}
+  <title>AI Builders Project</title>
+{% endblock %}
+
+{% block content%}
+<h1 style="font-size: -2; color:orange">CATsification 😻</h1>
+    <h2>The cat classification AI Model.</h2>
+    <p style="margin-bottom: 0.5em;">Upload your cat pictures to get recommendations on what subreddit you can post your cat on!</p>
+    <details {{detailStatus}} style="max-width: 600px; font-size: smaller; display:block; margin:auto; margin-bottom: 0.5em;">
+      <summary>More info please!</summary>
+      <p style="text-align:center">With over 30 subreddits available in the recommendation list, you might as well discover new communities on Reddit with cats that look similar to yours.
+        <br>To learn more about how I made this, visit this <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">link.</a> 
+        <br>Anyways, I really hope you enjoy this, and have a wonderful day! :)</p>
+    </details>
+
+  <center>
+      <hr style="width:60%; margin:auto;">
+
+      {%if image_base64%}
+      <image src='data:image/jpeg;base64,{{ image_base64 }}' style='display: block; margin: 1em auto; max-height:40%; max-width:40%; height:auto; width:auto; padding:1em; border-radius: 0.5em; background-color:#161f27;' width="80%"></image>
+      {% endif %}
+
+      <form action="/ai" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept="image/*" onchange="document.querySelector('#submitbutton').click()" style="margin-top: 1em; margin-bottom: 1em;">
+        <input style="display: none; height: 0px;" id="submitbutton" type="submit" value="Upload Image">
+      </form>
+    </center>
+
+  {{predictionTable|safe}}
+  
+  {%if alternativesTable %}
+  <details>
+    <summary>View other alternative predictions.</summary>
+    {{alternativesTable|safe}}
+  </details>
+  {%endif%}
+
+  <footer style="margin-top: 1em">
+    <center>
+      Deployment: <code>v0.4</code>  |  AI Model: <code>catsification-large-v3.5</code>  |  Model Status: <code>{{modelStatus}}</code>
+    </center>
+  </footer>
+{% endblock%}

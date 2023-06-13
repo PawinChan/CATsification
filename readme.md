@@ -1,4 +1,4 @@
-# CATsification 😻
+# CATsification
 ## The cat classification AI Model
 
 Wondering about which subreddit you can post your cat on?  

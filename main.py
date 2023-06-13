@@ -24,11 +24,6 @@ app.register_blueprint(mlDeployment, url_prefix="/ai")
 def home():
   return redirect('/ai')
 
-@app.route('/robots.txt')
-def robots():
-  print(f'''"robots.txt" has been accessed by {request.headers['User-Agent']}\n''')
-  return send_from_directory(os.path.join(app.root_path, 'static'),'robots.txt')
-
 #other routes/pages for your website goes here
 
 #customized error pages
@@ -44,6 +39,6 @@ if __name__ == '__main__':
 
   if DEBUGMODEENABLED:
     print(f"Debugging mode is enabled!")
-    app.run(host="0.0.0.0", port=8080, debug=True)
+    app.run(host="0.0.0.0", debug=True)
   else:
-    waitress.serve(app, host="0.0.0.0", port=8080)
+    waitress.serve(app, host="0.0.0.0")

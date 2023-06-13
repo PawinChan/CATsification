@@ -1,0 +1,15 @@
+h1 {
+  font-size: -2; color:orange;
+}
+
+.withborders {
+  display: block;
+  margin: 1em auto;
+  max-height:40%;
+  max-width:40%;
+  height:auto;
+  width:auto;
+  padding:1em;
+  border-radius:0.5em; 
+  background-color:#161f27;
+}

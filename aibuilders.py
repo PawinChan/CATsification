@@ -1,9 +1,10 @@
-from flask import Blueprint,render_template, request, abort
+from flask import Blueprint,render_template, redirect, url_for, request, abort, send_from_directory
 from werkzeug.utils import secure_filename
 from time import perf_counter
 from base64 import b64encode
 from shutil import rmtree
 from dotenv import load_dotenv
+from random import shuffle
 import os
 load_dotenv()
 
@@ -20,6 +21,12 @@ def cleanup_images():
   rmtree("./resources/ai_temporary/")
   os.mkdir("./resources/ai_temporary/")
   print("Done cleaning images.\n")
+
+def get_sample_images(shuffleWanted=False):
+  imageList = os.listdir('./static/ai_samples')
+  if shuffleWanted:
+    shuffle(imageList)
+  return imageList
 
 def prepare_learner():
   global learner
@@ -64,7 +71,7 @@ def classify_cat(file):
   for item in topItems:
     confidence, prediction = item
     result = f"<tr> <td> <a href='https://reddit.com/r/{prediction}/top/?t=all' target='_blank'>{prediction}</a> </td> <td>{round(confidence, 4)}</td> </tr>"
-    if float(confidence) > 0.6:
+    if float(confidence) > 0.5:
       predictionTable.append(result)
     else:
       alternativesTable.append(result)
@@ -89,6 +96,10 @@ def classify_cat(file):
 
   return stuffToReturn
   
+@mlDeployment.route("/")
+def index():
+  return redirect(url_for("mlDeployment.aibuilders_project"))
+
 @mlDeployment.route("/prepare_model")
 def modelPreparationRoute():
   print("Model preparation requested")
@@ -100,10 +111,22 @@ def modelPreparationRoute():
     <body><p>Success.</p></body>
   </html>"""
 
-@mlDeployment.route("/", methods=['GET','POST'])
+@mlDeployment.route("/demo/<image>")
+def show_ai_demo(image):
+  filename = f"static/ai_samples/{image}"
+  print('Preview requested')
+  try:
+    predictionTable, alternativesTable = classify_cat(filename)
+  except Exception as e:
+    predictionTable = f"<p>We ran into an error:</p> <code>{e}</code>"
+  with open(filename, "rb") as file:
+    image_base64 = b64encode(file.read())
+  return render_template("ml.html", predictionTable = predictionTable, alternativesTable = alternativesTable, image_base64 = image_base64.decode('utf-8'), modelStatus = "Fully Loaded.")
+
+@mlDeployment.route("/CATsification", methods=['GET','POST'])
 def aibuilders_project():
   if request.method =="POST":
-    print("Image Classification requested")
+    #print("Image Classification requested")
     #print("Post Method")
     #print(request.files)
     uploaded_file = request.files['file']
@@ -125,11 +148,11 @@ def aibuilders_project():
     #print(uploaded_file.stream.read())
     image_base64 = b64encode(uploaded_file.stream.read())
     #print(image_base64)
-    print("Successfully ent prediction.")
+    print("Successfully sent prediction.")
     return render_template("ml.html", predictionTable = predictionTable, alternativesTable = alternativesTable, image_base64 = image_base64.decode('utf-8'), modelStatus = "Fully Loaded.")
     
   
   else:
-    print("Normal page load of cat classification page.")
-    return render_template("ml.html", modelStatus = "Fully Loaded." if learner else "Not Loaded yet.", detailStatus = "open")
+    #print("Normal page load of cat classification page.")
+    return render_template("ml.html", modelStatus = "Fully Loaded." if learner else "Not Loaded yet.", detailStatus = "open", sample_images = get_sample_images())
 print("Sucessfully imported the AI deployment module")

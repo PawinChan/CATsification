@@ -24,7 +24,7 @@
 
       <span style="display: block; max-width: fit-content; padding: 4px 8px; background-color: #1a242f" class="withborders">
         <p style="margin: 0px auto; font-size: small;">Upload your image here:</p>
-        <form action="/ai" method="post" enctype="multipart/form-data" style="margin:auto;">
+        <form action="/ai/CATsification" method="post" enctype="multipart/form-data" style="margin:auto;">
           <input type="file" name="file" accept="image/*" onchange="document.querySelector('#submitbutton').click()" style="margin-top: 1em; margin-bottom: 1em; text-align: center;">
           <input style="display: none; height: 0px;" id="submitbutton" type="submit" value="Upload Image">
         </form>
